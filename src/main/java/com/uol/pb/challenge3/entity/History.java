@@ -1,5 +1,6 @@
 package com.uol.pb.challenge3.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -14,11 +15,22 @@ import java.time.Instant;
 @NoArgsConstructor
 @Entity
 @Table(name="history")
+@JsonIgnoreProperties("post")
 public class History {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     Long id;
-
     Instant instant;
-    String status;
+    @Enumerated(EnumType.STRING)
+    HistoryEnum status;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name="post_id", nullable = false)
+    private Post post;
+    public History(Instant now, String created, Post post) {
+        this.instant = now;
+        this.status = HistoryEnum.valueOf(created);
+        this.post = post;
+        post.getHistory().add(this);
+    }
 }

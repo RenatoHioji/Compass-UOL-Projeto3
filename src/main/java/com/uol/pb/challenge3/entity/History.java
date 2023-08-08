@@ -1,7 +1,18 @@
 package com.uol.pb.challenge3.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import jakarta.persistence.*;
+
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.FetchType;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -16,6 +27,7 @@ import java.time.Instant;
 @Entity
 @Table(name="history")
 @JsonIgnoreProperties("post")
+
 public class History {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

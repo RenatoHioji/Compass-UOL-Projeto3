@@ -1,5 +1,6 @@
 package com.uol.pb.challenge3.feignclient;
 
+import com.uol.pb.challenge3.entity.Comment;
 import com.uol.pb.challenge3.entity.Post;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,4 +14,7 @@ public interface ExternalAPI {
     List<Post> getPosts();
     @GetMapping("/posts/{postId}")
     Post getPostById(@PathVariable Long postId);
+
+    @GetMapping("/comments?postId={postId}")
+    List<Comment> getCommentsByPostId(@PathVariable Long postId);
 }

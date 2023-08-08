@@ -2,7 +2,6 @@ package com.uol.pb.challenge3.controller;
 
 
 import com.uol.pb.challenge3.dto.response.PostDTOResponse;
-import com.uol.pb.challenge3.entity.Post;
 import com.uol.pb.challenge3.service.ApiService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -24,5 +23,10 @@ public class ApiController {
     @GetMapping
     public ResponseEntity<List<PostDTOResponse>> findAll(){
         return ResponseEntity.ok(apiService.findAll());
+    }
+    @DeleteMapping("/{postId}")
+    public ResponseEntity<Void> disable(@PathVariable(value="postId") Long postId){
+        apiService.disabled(postId);
+        return ResponseEntity.ok(null);
     }
 }

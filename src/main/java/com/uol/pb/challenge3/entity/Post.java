@@ -1,7 +1,13 @@
 package com.uol.pb.challenge3.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.FetchType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -16,11 +22,10 @@ import java.util.Set;
 @NoArgsConstructor
 @Entity
 @Table(name="posts")
-@JsonIgnoreProperties("history")
+@JsonIgnoreProperties({"history", "comment"})
 public class Post {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
     String title;
     String body;

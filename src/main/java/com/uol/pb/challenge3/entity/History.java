@@ -2,6 +2,7 @@ package com.uol.pb.challenge3.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
+import com.uol.pb.challenge3.entity.enums.HistoryEnum;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;

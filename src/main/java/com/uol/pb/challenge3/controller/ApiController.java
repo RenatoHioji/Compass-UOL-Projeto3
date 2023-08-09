@@ -1,6 +1,4 @@
 package com.uol.pb.challenge3.controller;
-
-
 import com.uol.pb.challenge3.dto.response.PostDTOResponse;
 import com.uol.pb.challenge3.service.ApiService;
 import lombok.RequiredArgsConstructor;
@@ -9,6 +7,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/posts")
@@ -16,6 +15,7 @@ public class ApiController {
     private final ApiService apiService;
 
     @PostMapping("/{postId}")
+
     public void processPost(@PathVariable(value="postId") Long postId){
         apiService.processPost(postId);
     }
@@ -27,6 +27,12 @@ public class ApiController {
     @DeleteMapping("/{postId}")
     public ResponseEntity<Void> disable(@PathVariable(value="postId") Long postId){
         apiService.disabled(postId);
+        return ResponseEntity.ok(null);
+    }
+
+    @PutMapping("/{postId}")
+    public ResponseEntity<Void> reprocessPost(@PathVariable(value="postId") Long postId){
+        apiService.reprocessPost(postId);
         return ResponseEntity.ok(null);
     }
 }

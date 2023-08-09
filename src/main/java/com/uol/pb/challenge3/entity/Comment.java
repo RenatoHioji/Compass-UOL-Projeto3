@@ -18,6 +18,8 @@ public class Comment {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     Long id;
+
+    @Column(length = 500)
     String body;
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name="post_id", nullable = false)

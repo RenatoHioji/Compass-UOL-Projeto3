@@ -7,14 +7,15 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.List;
+import java.util.Optional;
 
 @FeignClient(name="external-api", url="https://jsonplaceholder.typicode.com")
 public interface ExternalAPI {
     @GetMapping("/posts")
     List<Post> getPosts();
     @GetMapping("/posts/{postId}")
-    Post getPostById(@PathVariable Long postId);
+    Optional<Post> getPostById(@PathVariable Long postId);
 
     @GetMapping("/comments?postId={postId}")
-    List<Comment> getCommentsByPostId(@PathVariable Long postId);
+    Optional<List<Comment>> getCommentsByPostId(@PathVariable Long postId);
 }

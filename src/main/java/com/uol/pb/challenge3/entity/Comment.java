@@ -25,9 +25,9 @@ public class Comment {
     @JoinColumn(name="post_id", nullable = false)
     private Post post;
 
-    public Comment(String body, Post post) {
+    public Comment(String body, Post postDTO) {
         this.body = body;
-        this.post = post;
-        post.getComment().add(this);
+        this.post = postDTO;
+        postDTO.getComment().add(this);
     }
 }

@@ -40,10 +40,10 @@ public class History {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name="post_id", nullable = false)
     private Post post;
-    public History(Instant now, String created, Post post) {
+    public History(Instant now, String created, Post postDTO) {
         this.instant = now;
         this.status = HistoryEnum.valueOf(created);
-        this.post = post;
-        post.getHistory().add(this);
+        this.post = postDTO;
+        postDTO.getHistory().add(this);
     }
 }

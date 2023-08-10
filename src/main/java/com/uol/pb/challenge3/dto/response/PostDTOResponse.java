@@ -6,14 +6,15 @@ import com.uol.pb.challenge3.entity.Post;
 
 import java.util.Set;
 
-public record PostDTOResponse(
-        Long id,
-        String title,
-        String body,
-        Set<Comment> comments,
-        Set<History> historySet
-) {
-    public PostDTOResponse(Post post){
-        this(post.getId(), post.getTitle(), post.getBody(), post.getComment(), post.getHistory());
+    public record PostDTOResponse(
+            Long id,
+            String title,
+            String body,
+            Set<Comment> comment,
+            Set<History> history
+        ) {
+
+        public PostDTOResponse(Post post) {
+            this(post.getId(), post.getTitle(), post.getBody(), post.getComment(), post.getHistory());
+        }
     }
-}

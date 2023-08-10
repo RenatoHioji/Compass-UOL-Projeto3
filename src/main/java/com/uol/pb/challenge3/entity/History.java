@@ -3,25 +3,14 @@ package com.uol.pb.challenge3.entity;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import com.uol.pb.challenge3.entity.enums.HistoryEnum;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.FetchType;
+import jakarta.persistence.*;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 import java.time.Instant;
 
-@Setter
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
@@ -32,18 +21,20 @@ import java.time.Instant;
 public class History {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    Long id;
-    Instant instant;
-    @Enumerated(EnumType.STRING)
-    HistoryEnum status;
+    private Long id;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name="post_id", nullable = false)
-    private Post post;
-    public History(Instant now, String created, Post postDTO) {
-        this.instant = now;
-        this.status = HistoryEnum.valueOf(created);
-        this.post = postDTO;
-        postDTO.getHistory().add(this);
+    private Instant date;
+
+    @Enumerated(EnumType.STRING)
+    private HistoryEnum status;
+
+    @Column(name = "post_id")
+    Long postId;
+
+    public History(HistoryEnum status, Long postId) {
+        this.status = status;
+        this.postId = postId;
+        this.date = Instant.now();
     }
+
 }

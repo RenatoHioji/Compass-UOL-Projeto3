@@ -15,6 +15,6 @@ import java.util.Set;
         ) {
 
         public PostDTOResponse(Post post) {
-            this(post.getId(), post.getTitle(), post.getBody(), post.getComment(), post.getHistory());
+            this(post.getId(), post.getTitle(), post.getBody(), post.getComments(), post.getHistories());
         }
     }

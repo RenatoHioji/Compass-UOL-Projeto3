@@ -13,7 +13,7 @@ public interface ApiController {
     @GetMapping
     ResponseEntity<List<PostDTOResponse>> findAll();
     @DeleteMapping("/{postId}")
-    ResponseEntity<Void> disable(@PathVariable(value="postId") Long postId);
+    ResponseEntity<String> disable(@PathVariable(value="postId") Long postId);
     @PutMapping("/{postId}")
-    ResponseEntity<Void> reprocessPost(@PathVariable(value="postId") Long postId);
+    ResponseEntity<String> reprocessPost(@PathVariable(value="postId") Long postId);
 }

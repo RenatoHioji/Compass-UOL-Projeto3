@@ -11,8 +11,6 @@ import org.springframework.scheduling.annotation.EnableAsync;
 @EnableFeignClients
 @EnableAsync
 public class ChallengeApplication {
-	private static final String MESSAGE_QUEUE = "message_queue";
-
 	public static void main(String[] args) {
 		SpringApplication.run(ChallengeApplication.class, args);
 

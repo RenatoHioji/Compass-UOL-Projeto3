@@ -16,10 +16,10 @@ public class ApiControllerImpl implements ApiController {
     private final ApiService apiService;
     private final JmsTemplate jmsTemplate;
 
-
     @Override
     public ResponseEntity<String> processPost(@PathVariable(value="postId") Long postId){
         jmsTemplate.convertAndSend("process_post_queue", postId);
+
         return ResponseEntity.ok("CREATED");
     }
     @Override
@@ -27,12 +27,13 @@ public class ApiControllerImpl implements ApiController {
         return ResponseEntity.ok(apiService.findAll());
     }
     @Override
-    public ResponseEntity<Void> disable(@PathVariable(value="postId") Long postId){
+    public ResponseEntity<String> disable(@PathVariable(value="postId") Long postId){
         apiService.disabled(apiService.findById(postId));
-        return ResponseEntity.ok(null);
+        return ResponseEntity.ok("Disabled");
     }
     @Override
-    public ResponseEntity<Void> reprocessPost(@PathVariable(value="postId") Long postId){
-        return ResponseEntity.ok(null);
+    public ResponseEntity<String> reprocessPost(@PathVariable(value="postId") Long postId){
+        jmsTemplate.convertAndSend("update_post_queue", postId);
+        return ResponseEntity.ok("Updated");
     }
 }

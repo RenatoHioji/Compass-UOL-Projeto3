@@ -5,11 +5,9 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Entity
 @Getter
-@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name="comments")
@@ -17,17 +15,15 @@ import lombok.Setter;
 public class Comment {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    Long id;
-
+    private Long id;
     @Column(length = 500)
-    String body;
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name="post_id", nullable = false)
-    private Post post;
+    private String body;
+    @Column(name = "post_id")
+    Long postId;
 
-    public Comment(String body, Post postDTO) {
+    public Comment(String body, Long id) {
         this.body = body;
-        this.post = postDTO;
-        postDTO.getComment().add(this);
+        this.postId = id;
     }
 }
+

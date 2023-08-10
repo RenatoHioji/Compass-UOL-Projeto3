@@ -2,21 +2,14 @@ package com.uol.pb.challenge3.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.uol.pb.challenge3.dto.response.PostDTOResponse;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.FetchType;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
-
 import java.util.HashSet;
 import java.util.Set;
 
 @Getter
-@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
@@ -25,26 +18,27 @@ import java.util.Set;
 public class Post {
 
     @Id
-    Long id;
-    String title;
-    String body;
+    private Long id;
+    private String title;
+    private String body;
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    @JoinColumn(name = "post_id", referencedColumnName = "id")
+    private Set<Comment> comments = new HashSet<>();
 
-    @OneToMany(fetch = FetchType.EAGER)
-    private Set<Comment> comment = new HashSet<>();
-
-    @OneToMany(fetch = FetchType.EAGER)
-    private Set<History> history = new HashSet<>();
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    @JoinColumn(name = "post_id", referencedColumnName = "id")
+    private Set<History> histories = new HashSet<>();
 
     public Post(Long postId) {
         this.id = postId;
-        this.title = null;
-        this.body = null;
+        this.comments = new HashSet<>();
+        this.histories = new HashSet<>();
     }
     public Post(PostDTOResponse postDTOResponse){
         this.id = postDTOResponse.id();
         this.title = postDTOResponse.title();
         this.body= postDTOResponse.body();
-        this.comment = postDTOResponse.comment();
-        this.history = postDTOResponse.history();
+        this.comments = postDTOResponse.comment();
+        this.histories = postDTOResponse.history();
     }
 }

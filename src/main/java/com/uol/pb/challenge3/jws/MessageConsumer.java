@@ -1,6 +1,5 @@
 package com.uol.pb.challenge3.jws;
 
-import com.uol.pb.challenge3.dto.response.PostDTOResponse;
 import com.uol.pb.challenge3.service.ApiService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.jms.annotation.JmsListener;
@@ -12,17 +11,24 @@ import org.springframework.stereotype.Component;
 public class MessageConsumer {
     private static final String PROCESS_POST_QUEUE = "process_post_queue";
     private static final String COMMENT_POST_QUEUE = "comment_post_queue";
+    private static final String UPDATE_POST_QUEUE = "update_post_queue";
     private final ApiService apiService;
     private final JmsTemplate jmsTemplate;
 
     @JmsListener(destination = PROCESS_POST_QUEUE)
     public void postReceiverMessage(Long postId){
         apiService.createPost(postId);
-        jmsTemplate.convertAndSend("comment_post_queue", apiService.findById(postId));
+        jmsTemplate.convertAndSend("comment_post_queue", postId);
     }
 
     @JmsListener(destination = COMMENT_POST_QUEUE)
-    public void commentReceiverMessage(PostDTOResponse postDTOResponse){
-        apiService.findComment(postDTOResponse);
+    public void commentReceiverMessage(Long postId){
+        apiService.findComment(apiService.findById(postId));
+    }
+
+    @JmsListener(destination = UPDATE_POST_QUEUE)
+    public void updateReceiverMessage(Long postId){
+        apiService.updatingPost(postId);
+        jmsTemplate.convertAndSend("comment_post_queue", postId);
     }
 }

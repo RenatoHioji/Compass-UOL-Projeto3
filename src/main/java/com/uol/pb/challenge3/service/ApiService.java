@@ -4,7 +4,6 @@ import com.uol.pb.challenge3.dto.response.PostDTOResponse;
 import com.uol.pb.challenge3.entity.Comment;
 import com.uol.pb.challenge3.entity.Post;
 import com.uol.pb.challenge3.entity.enums.HistoryEnum;
-import com.uol.pb.challenge3.jws.MessageConsumer;
 import com.uol.pb.challenge3.repository.CommentRepository;
 import com.uol.pb.challenge3.repository.HistoryRepository;
 import com.uol.pb.challenge3.repository.PostRepository;
@@ -25,7 +24,6 @@ public class ApiService{
     private final HistoryRepository historyRepository;
     private final PostRepository repository;
     private final CommentRepository commentRepository;
-    private JmsTemplate jmsTemplate;
 
     public Optional<Post> getPost(Long postId){
         return externalAPI.getPostById(postId);
@@ -57,7 +55,7 @@ public class ApiService{
         log.info("FIND_COMMENTS");
         getComments(postDTOResponse.id()).ifPresentOrElse(comments -> {
                 comments.forEach(comment -> commentRepository.save(new Comment(comment.getBody(), postDTOResponse.id())));
-                historyRepository.save(new History(HistoryEnum.POST_FIND, postDTOResponse.id()));
+                historyRepository.save(new History(HistoryEnum.COMMENTS_FIND, postDTOResponse.id()));
                 commentOk(postDTOResponse);
         }, () -> failedPost(postDTOResponse));
     }

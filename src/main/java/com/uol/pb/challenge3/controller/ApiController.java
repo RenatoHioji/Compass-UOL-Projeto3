@@ -6,14 +6,15 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+
 public interface ApiController {
-    @PostMapping("/{postId}")
+
     ResponseEntity<String> processPost(@PathVariable(value="postId") Long postId);
 
-    @GetMapping
+
     ResponseEntity<List<PostDTOResponse>> findAll();
-    @DeleteMapping("/{postId}")
+
     ResponseEntity<String> disable(@PathVariable(value="postId") Long postId);
-    @PutMapping("/{postId}")
+
     ResponseEntity<String> reprocessPost(@PathVariable(value="postId") Long postId);
 }

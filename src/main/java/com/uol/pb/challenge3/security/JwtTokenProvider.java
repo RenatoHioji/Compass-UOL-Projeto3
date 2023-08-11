@@ -1,5 +1,6 @@
 package com.uol.pb.challenge3.security;
 
+import com.uol.pb.challenge3.exceptions.ResourceNotFoundException;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.MalformedJwtException;
@@ -8,12 +9,13 @@ import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
+import org.springframework.stereotype.Component;
 
 import java.security.Key;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.Date;
-
+@Component
 public class JwtTokenProvider {
     @Value("${app.jwt-secret}")
     private String jwtSecret;

@@ -20,7 +20,7 @@ public class ApiControllerImpl implements ApiController {
     public ResponseEntity<String> processPost(@PathVariable(value="postId") Long postId){
         jmsTemplate.convertAndSend("process_post_queue", postId);
 
-        return ResponseEntity.ok("CREATED");
+        return ResponseEntity.ok("CREATING");
     }
     @Override
     public ResponseEntity<List<PostDTOResponse>> findAll(){
@@ -29,11 +29,11 @@ public class ApiControllerImpl implements ApiController {
     @Override
     public ResponseEntity<String> disable(@PathVariable(value="postId") Long postId){
         apiService.disabled(apiService.findById(postId));
-        return ResponseEntity.ok("Disabled");
+        return ResponseEntity.ok("DISABLING");
     }
     @Override
     public ResponseEntity<String> reprocessPost(@PathVariable(value="postId") Long postId){
         jmsTemplate.convertAndSend("update_post_queue", postId);
-        return ResponseEntity.ok("Updated");
+        return ResponseEntity.ok("UPDATING");
     }
 }

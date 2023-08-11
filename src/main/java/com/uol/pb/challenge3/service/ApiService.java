@@ -4,7 +4,6 @@ import com.uol.pb.challenge3.dto.response.PostDTOResponse;
 import com.uol.pb.challenge3.entity.Comment;
 import com.uol.pb.challenge3.entity.Post;
 import com.uol.pb.challenge3.entity.enums.HistoryEnum;
-import com.uol.pb.challenge3.jws.MessageConsumer;
 import com.uol.pb.challenge3.repository.CommentRepository;
 import com.uol.pb.challenge3.repository.HistoryRepository;
 import com.uol.pb.challenge3.repository.PostRepository;
@@ -12,7 +11,6 @@ import com.uol.pb.challenge3.entity.History;
 import com.uol.pb.challenge3.feignclient.ExternalAPI;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.jms.core.JmsTemplate;
 import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
@@ -25,8 +23,6 @@ public class ApiService{
     private final HistoryRepository historyRepository;
     private final PostRepository repository;
     private final CommentRepository commentRepository;
-    private JmsTemplate jmsTemplate;
-
     public Optional<Post> getPost(Long postId){
         return externalAPI.getPostById(postId);
     }
@@ -34,16 +30,24 @@ public class ApiService{
         return externalAPI.getCommentsByPostId(postId);
     }
     public void createPost(Long postId){
+        verifyPostId(postId);
         PostDTOResponse postDTOResponse = new PostDTOResponse(repository.save(new Post(postId)));
-        historyRepository.save(new History(HistoryEnum.CREATED, postDTOResponse.id()));
+
+        History history = historyRepository.save(new History(HistoryEnum.CREATED, postDTOResponse.id()));
+        System.out.println(history.toString());
         log.info("CREATED");
+
         findPost(postDTOResponse);
 
     }
     public void findPost(PostDTOResponse myPostDTOResponse){
         log.info("FIND_POST");
         getPost(myPostDTOResponse.id()).ifPresentOrElse(post -> {
-            PostDTOResponse updatedPostDTOResponse = new PostDTOResponse(repository.save(new Post(post.getId(), post.getTitle(), post.getBody(), myPostDTOResponse.comment(), post.getHistories())));
+            Post posted = repository.findById(myPostDTOResponse.id()).map(postUpdate-> new Post(post.getId(), post.getTitle(), post.getTitle(), postUpdate.getComments(), postUpdate.getHistories())).orElseThrow(
+                    () -> new RuntimeException("Error")
+            );
+            PostDTOResponse updatedPostDTOResponse = new PostDTOResponse(repository.save(posted));
+
             historyRepository.save(new History(HistoryEnum.POST_FIND, myPostDTOResponse.id()));
             postOk(updatedPostDTOResponse);
         }, () -> failedPost(myPostDTOResponse));
@@ -57,7 +61,7 @@ public class ApiService{
         log.info("FIND_COMMENTS");
         getComments(postDTOResponse.id()).ifPresentOrElse(comments -> {
                 comments.forEach(comment -> commentRepository.save(new Comment(comment.getBody(), postDTOResponse.id())));
-                historyRepository.save(new History(HistoryEnum.POST_FIND, postDTOResponse.id()));
+                historyRepository.save(new History(HistoryEnum.COMMENTS_FIND, postDTOResponse.id()));
                 commentOk(postDTOResponse);
         }, () -> failedPost(postDTOResponse));
     }
@@ -74,18 +78,25 @@ public class ApiService{
 
     public void disabled(PostDTOResponse postDTOResponse){
         log.info("DISABLED");
-        List<History> historyList = historyRepository.findAllByPostId(new Post(postDTOResponse).getId());
-        if(historyList.get(historyList.size() - 1).getStatus().equals(HistoryEnum.valueOf("DISABLED"))){
-            throw new RuntimeException("The post is already disabled");
+        List<History> historyList = historyRepository.findAllByPostId(postDTOResponse.id());
+        if(historyList.get(historyList.size()- 1).getStatus().equals(HistoryEnum.valueOf("ENABLED"))
+                || historyList.get(historyList.size()- 1).getStatus().equals(HistoryEnum.valueOf("FAILED"))){
+            historyRepository.save(new History(HistoryEnum.DISABLED, postDTOResponse.id()));
+        }else{
+            throw new RuntimeException("This post only can be disabled if it is enabled or failed");
         }
-        historyRepository.save(new History(HistoryEnum.DISABLED, postDTOResponse.id()));
+
     }
     public void updatingPost(Long postId) {
-        log.info("UPDATING");
-        historyRepository.save(new History(HistoryEnum.UPDATING, postId));
-        findPost(findById(postId));
+        List<History> historyList = searchHistory(postId);
+        if(historyList.get(historyList.size()- 1).getStatus().equals(HistoryEnum.valueOf("ENABLED"))
+                || historyList.get(historyList.size()- 1).getStatus().equals(HistoryEnum.valueOf("DISABLED"))){
+            historyRepository.save(new History(HistoryEnum.UPDATING, postId));
+            log.info("UPDATING");
+        }else{
+            throw new RuntimeException("This post can only be updated if it status is ENABLED or DISABLED");
+        }
     }
-
     private void failedPost(PostDTOResponse postDTOResponse) {
         log.info("FAILED");
         historyRepository.save(new History(HistoryEnum.FAILED, postDTOResponse.id()));
@@ -93,6 +104,15 @@ public class ApiService{
     }
     public List<PostDTOResponse> findAll(){
          return repository.findAll().stream().map(PostDTOResponse::new).toList();
+    }
+
+    public void verifyPostId(Long postId){
+        repository.findById(postId).ifPresent(post -> {
+            throw new RuntimeException("Post already registered on system");
+        });
+    }
+    public List<History> searchHistory(Long postId){
+        return historyRepository.findAllByPostId(postId);
     }
 
     public PostDTOResponse findById(Long postId) {

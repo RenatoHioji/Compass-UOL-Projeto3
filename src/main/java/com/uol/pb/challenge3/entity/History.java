@@ -8,6 +8,7 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import java.time.Instant;
 
@@ -17,7 +18,7 @@ import java.time.Instant;
 @Entity
 @Table(name="history")
 @JsonIgnoreProperties("post")
-
+@ToString
 public class History {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

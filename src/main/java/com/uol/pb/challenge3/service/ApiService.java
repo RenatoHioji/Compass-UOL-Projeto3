@@ -23,6 +23,7 @@ public class ApiService{
     private final HistoryRepository historyRepository;
     private final PostRepository repository;
     private final CommentRepository commentRepository;
+
     public Optional<Post> getPost(Long postId){
         return externalAPI.getPostById(postId);
     }

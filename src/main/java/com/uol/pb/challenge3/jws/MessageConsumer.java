@@ -28,7 +28,7 @@ public class MessageConsumer {
 
     @JmsListener(destination = UPDATE_POST_QUEUE)
     public void updateReceiverMessage(Long postId){
-        apiService.updatingPost(postId);
+        apiService.updatingPost(apiService.findById(postId));
         jmsTemplate.convertAndSend("comment_post_queue", postId);
     }
 }

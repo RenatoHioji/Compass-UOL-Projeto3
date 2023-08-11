@@ -35,8 +35,6 @@ public class ApiService{
         PostDTOResponse postDTOResponse = new PostDTOResponse(repository.save(new Post(postId)));
 
         History history = historyRepository.save(new History(HistoryEnum.CREATED, postDTOResponse.id()));
-        System.out.println(history.toString());
-        log.info("CREATED");
 
         findPost(postDTOResponse);
 
@@ -88,12 +86,13 @@ public class ApiService{
         }
 
     }
-    public void updatingPost(Long postId) {
-        List<History> historyList = searchHistory(postId);
+    public void updatingPost(PostDTOResponse postDTOResponse) {
+        List<History> historyList = searchHistory(postDTOResponse.id());
         if(historyList.get(historyList.size()- 1).getStatus().equals(HistoryEnum.valueOf("ENABLED"))
                 || historyList.get(historyList.size()- 1).getStatus().equals(HistoryEnum.valueOf("DISABLED"))){
-            historyRepository.save(new History(HistoryEnum.UPDATING, postId));
+            historyRepository.save(new History(HistoryEnum.UPDATING, postDTOResponse.id()));
             log.info("UPDATING");
+            findPost(postDTOResponse);
         }else{
             throw new RuntimeException("This post can only be updated if it status is ENABLED or DISABLED");
         }

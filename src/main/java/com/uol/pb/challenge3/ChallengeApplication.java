@@ -15,7 +15,6 @@ import org.springframework.scheduling.annotation.EnableAsync;
 public class ChallengeApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(ChallengeApplication.class, args);
-
 	}
 
 }

@@ -15,7 +15,6 @@ import java.util.List;
 public class ApiControllerImpl implements ApiController {
     private final ApiService apiService;
     private final JmsTemplate jmsTemplate;
-
     @Override
     @PostMapping("/{postId}")
     public ResponseEntity<String> processPost(@PathVariable(value="postId") Long postId){

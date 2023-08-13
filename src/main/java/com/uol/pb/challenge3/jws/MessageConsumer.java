@@ -2,6 +2,7 @@ package com.uol.pb.challenge3.jws;
 
 import com.uol.pb.challenge3.service.ApiService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.jms.JmsException;
 import org.springframework.jms.annotation.JmsListener;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.stereotype.Component;
@@ -17,18 +18,52 @@ public class MessageConsumer {
 
     @JmsListener(destination = PROCESS_POST_QUEUE)
     public void postReceiverMessage(Long postId){
-        apiService.createPost(postId);
-        jmsTemplate.convertAndSend("comment_post_queue", postId);
+        try{
+            apiService.createPost(postId);
+            jmsTemplate.convertAndSend("comment_post_queue", postId);
+        }catch (JmsException jms) {
+            throw new RuntimeException(jms);
+        }
+        catch (RuntimeException e) {
+            throw e;
+        }
+        catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+
     }
 
     @JmsListener(destination = COMMENT_POST_QUEUE)
     public void commentReceiverMessage(Long postId){
-        apiService.findComment(apiService.findById(postId));
+        try{
+            apiService.findComment(apiService.findById(postId));
+        }catch (JmsException jms) {
+            throw new RuntimeException(jms);
+        }
+        catch (RuntimeException e) {
+            throw e;
+        }
+        catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
     }
 
     @JmsListener(destination = UPDATE_POST_QUEUE)
     public void updateReceiverMessage(Long postId){
-        apiService.updatingPost(apiService.findById(postId));
-        jmsTemplate.convertAndSend("comment_post_queue", postId);
+        try{
+            apiService.updatingPost(apiService.findById(postId));
+            jmsTemplate.convertAndSend("comment_post_queue", postId);
+        }catch (JmsException jms) {
+            throw new RuntimeException(jms);
+        }
+        catch (RuntimeException e) {
+            throw e;
+        }
+        catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
     }
 }

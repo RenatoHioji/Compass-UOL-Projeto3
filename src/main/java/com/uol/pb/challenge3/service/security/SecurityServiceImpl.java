@@ -4,6 +4,7 @@ import com.uol.pb.challenge3.dto.request.LoginDTORequest;
 import com.uol.pb.challenge3.dto.request.RegisterDTORequest;
 import com.uol.pb.challenge3.entity.security.Role;
 import com.uol.pb.challenge3.entity.security.User;
+import com.uol.pb.challenge3.exceptions.ResourceNotFoundException;
 import com.uol.pb.challenge3.exceptions.UserAlreadyExistsException;
 import com.uol.pb.challenge3.repository.security.RoleRepository;
 import com.uol.pb.challenge3.repository.security.UserRepository;
@@ -17,6 +18,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 
 @Service
@@ -39,7 +41,9 @@ public class SecurityServiceImpl implements SecurityService {
         RegisterDTORequest requestEncoded = new RegisterDTORequest(request.getUsername(), request.getName(), request.getEmail(), passwordEncoder.encode(request.getPassword()));
         User user = new User(requestEncoded);
         Set<Role> roles = new HashSet<>();
-        Role userRole = roleRepository.findByName("ROLE_USER").get();
+        roleRepository.saveIfNotExistsName(new Role("ROLE_USER"));
+        Role userRole = roleRepository.findByName("ROLE_USER").orElseThrow(() -> new ResourceNotFoundException(""));
+
         roles.add(userRole);
         user.setRoles(roles);
         userRepository.save(user);

@@ -14,16 +14,17 @@ import lombok.NoArgsConstructor;
 @JsonIgnoreProperties("post")
 public class Comment {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     @Column(length = 500)
     private String body;
     @Column(name = "post_id")
     Long postId;
 
-    public Comment(String body, Long id) {
+    public Comment(String body, Long postId, Long commentId) {
         this.body = body;
-        this.postId = id;
+        this.postId = postId;
+        this.id = commentId;
     }
+
 }
 

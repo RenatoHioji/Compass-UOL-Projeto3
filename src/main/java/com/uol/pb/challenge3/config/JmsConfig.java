@@ -8,6 +8,10 @@ import org.springframework.jms.config.DefaultJmsListenerContainerFactory;
 import org.springframework.jms.config.JmsListenerContainerFactory;
 import org.springframework.jms.support.converter.MappingJackson2MessageConverter;
 import org.springframework.jms.support.converter.MessageType;
+import org.springframework.stereotype.Service;
+import org.xml.sax.ErrorHandler;
+import org.xml.sax.SAXException;
+import org.xml.sax.SAXParseException;
 
 @Configuration
 public class JmsConfig {
@@ -29,5 +33,24 @@ public class JmsConfig {
         converter.setTargetType(MessageType.TEXT);
         converter.setTypeIdPropertyName("_type");
         return converter;
+    }
+
+    @Service
+    public static class ResourceNotFoundException implements ErrorHandler{
+
+        @Override
+        public void warning(SAXParseException exception) throws SAXException {
+            exception.getMessage();
+        }
+
+        @Override
+        public void error(SAXParseException exception) throws SAXException {
+            exception.getMessage();
+        }
+
+        @Override
+        public void fatalError(SAXParseException exception) throws SAXException {
+            exception.getMessage();
+        }
     }
 }

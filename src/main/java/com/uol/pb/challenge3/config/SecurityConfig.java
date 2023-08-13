@@ -10,7 +10,9 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.annotation.web.configurers.CsrfConfigurer;
+import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -44,22 +46,29 @@ public class SecurityConfig {
     public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
         return configuration.getAuthenticationManager();
     }
+
+
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http, HandlerMappingIntrospector introspector) throws Exception {
 
         CsrfTokenRequestAttributeHandler requestHandler = new CsrfTokenRequestAttributeHandler();
         requestHandler.setCsrfRequestAttributeName("_csrf");
+
         MvcRequestMatcher.Builder mvcMatcherBuilder = new MvcRequestMatcher.Builder(introspector);
 
-        http.csrf(csrf-> csrf.csrfTokenRequestHandler(requestHandler).csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
+        http.csrf(csrf -> csrf
+                                .csrfTokenRequestHandler(requestHandler)
+                                .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
+                        .ignoringRequestMatchers(AntPathRequestMatcher.antMatcher("/h2-console/**"))
                 ).authorizeHttpRequests((authorize) -> authorize
-                        .requestMatchers(mvcMatcherBuilder.pattern("/api/**")).permitAll()
+                        .requestMatchers(mvcMatcherBuilder.pattern("/api/security/**")).permitAll()
                         .requestMatchers(mvcMatcherBuilder.pattern("/swagger-ui/**")).permitAll()
                         .requestMatchers(mvcMatcherBuilder.pattern("/swagger-resources/**")).permitAll()
                         .requestMatchers(mvcMatcherBuilder.pattern("/v3/api-docs/**")).permitAll()
                         .requestMatchers(AntPathRequestMatcher.antMatcher("/h2-console/**")).permitAll()
                         .anyRequest().authenticated()
                 )
+                .headers(headers -> headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin))
                 .exceptionHandling(exception ->
                         exception.authenticationEntryPoint(jwtAuthenticationEntryPoint)
                 )
@@ -79,6 +88,5 @@ public class SecurityConfig {
         http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
-
 
 }

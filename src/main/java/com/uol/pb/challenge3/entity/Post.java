@@ -21,13 +21,14 @@ public class Post {
     private Long id;
     private String title;
     private String body;
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
-    @JoinColumn(name = "post_id", referencedColumnName = "id")
-    private Set<Comment> comments = new HashSet<>();
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     @JoinColumn(name = "post_id", referencedColumnName = "id")
-    private Set<History> histories = new HashSet<>();
+    @OrderBy("id ASC")private Set<Comment> comments = new HashSet<>();
+
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    @JoinColumn(name = "post_id", referencedColumnName = "id")
+    @OrderBy("id ASC")private Set<History> histories = new HashSet<>();
 
     public Post(Long postId) {
         this.id = postId;

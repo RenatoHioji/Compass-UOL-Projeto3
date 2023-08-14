@@ -1,5 +1,6 @@
 package com.uol.pb.challenge3.config;
 
+import com.uol.pb.challenge3.jms.CustomErrorHandler;
 import jakarta.jms.ConnectionFactory;
 import org.springframework.boot.autoconfigure.jms.DefaultJmsListenerContainerFactoryConfigurer;
 import org.springframework.context.annotation.Bean;
@@ -22,6 +23,7 @@ public class JmsConfig {
 
         DefaultJmsListenerContainerFactory factory =
                 new DefaultJmsListenerContainerFactory();
+        factory.setErrorHandler(new CustomErrorHandler());
         configure.configure(factory, connectionFactory);
         return factory;
     }
@@ -35,22 +37,4 @@ public class JmsConfig {
         return converter;
     }
 
-    @Service
-    public static class ResourceNotFoundException implements ErrorHandler{
-
-        @Override
-        public void warning(SAXParseException exception) throws SAXException {
-            exception.getMessage();
-        }
-
-        @Override
-        public void error(SAXParseException exception) throws SAXException {
-            exception.getMessage();
-        }
-
-        @Override
-        public void fatalError(SAXParseException exception) throws SAXException {
-            exception.getMessage();
-        }
-    }
 }

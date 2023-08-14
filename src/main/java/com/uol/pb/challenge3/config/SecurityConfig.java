@@ -61,12 +61,13 @@ public class SecurityConfig {
                                 .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
                         .ignoringRequestMatchers(AntPathRequestMatcher.antMatcher("/h2-console/**"))
                 ).authorizeHttpRequests((authorize) -> authorize
-                        .requestMatchers(mvcMatcherBuilder.pattern("/api/security/**")).permitAll()
+                        .requestMatchers(mvcMatcherBuilder.pattern("/posts")).permitAll()
+                        .requestMatchers(mvcMatcherBuilder.pattern("/security/**")).permitAll()
                         .requestMatchers(mvcMatcherBuilder.pattern("/swagger-ui/**")).permitAll()
                         .requestMatchers(mvcMatcherBuilder.pattern("/swagger-resources/**")).permitAll()
                         .requestMatchers(mvcMatcherBuilder.pattern("/v3/api-docs/**")).permitAll()
                         .requestMatchers(AntPathRequestMatcher.antMatcher("/h2-console/**")).permitAll()
-                        .anyRequest().authenticated()
+                        .anyRequest().permitAll()
                 )
                 .headers(headers -> headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin))
                 .exceptionHandling(exception ->

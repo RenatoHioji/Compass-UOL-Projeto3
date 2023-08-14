@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/api/security")
+@RequestMapping("/security")
 public class SecurityControllerImpl implements SecurityController {
     private final SecurityServiceImpl service;
     @Override

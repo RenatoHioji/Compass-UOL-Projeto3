@@ -20,6 +20,7 @@ public class Comment {
     @Column(name = "post_id")
     Long postId;
 
+
     public Comment(String body, Long postId, Long commentId) {
         this.body = body;
         this.postId = postId;

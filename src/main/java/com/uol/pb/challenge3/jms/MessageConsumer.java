@@ -18,7 +18,7 @@ public class MessageConsumer {
     @JmsListener(destination = PROCESS_POST_QUEUE)
     public void postReceiverMessage(Long postId){
             apiService.createPost(postId);
-            jmsTemplate.convertAndSend("comment_post_queue", postId);
+
     }
 
     @JmsListener(destination = COMMENT_POST_QUEUE)

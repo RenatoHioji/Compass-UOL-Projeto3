@@ -12,6 +12,8 @@ import com.uol.pb.challenge3.entity.History;
 import com.uol.pb.challenge3.feignclient.ExternalAPI;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.jms.core.JmsTemplate;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
@@ -24,15 +26,17 @@ public class ApiService{
     private final HistoryRepository historyRepository;
     private final PostRepository repository;
     private final CommentRepository commentRepository;
-
+    private final JmsTemplate jmsTemplate;
     public Optional<Post> getPost(Long postId){
         return externalAPI.getPostById(postId);
     }
     public Optional<List<Comment>> getComments(Long postId){
         return externalAPI.getCommentsByPostId(postId);
     }
+    @Async
     public void createPost(Long postId){
         verifyPostId(postId);
+        log.info("CREATED");
         PostDTOResponse postDTOResponse = new PostDTOResponse(repository.save(new Post(postId)));
 
         History history = historyRepository.save(new History(HistoryEnum.CREATED, postDTOResponse.id()));
@@ -40,6 +44,7 @@ public class ApiService{
         findPost(postDTOResponse);
 
     }
+    @Async
     public void findPost(PostDTOResponse myPostDTOResponse){
         log.info("FIND_POST");
         getPost(myPostDTOResponse.id()).ifPresentOrElse(post -> {
@@ -53,10 +58,13 @@ public class ApiService{
         }, () -> failedPost(myPostDTOResponse));
     }
 
+    @Async
     public void postOk(PostDTOResponse postDTOResponse){
         log.info("POST_OK");
         historyRepository.save(new History(HistoryEnum.POST_OK, postDTOResponse.id()));
+        jmsTemplate.convertAndSend("comment_post_queue", postDTOResponse.id());
     }
+    @Async
     public void findComment(PostDTOResponse postDTOResponse) {
         log.info("FIND_COMMENTS");
         getComments(postDTOResponse.id()).ifPresentOrElse(comments -> {
@@ -66,12 +74,13 @@ public class ApiService{
                 commentOk(postDTOResponse);
         }, () -> failedPost(postDTOResponse));
     }
+    @Async
     public void commentOk(PostDTOResponse postDTOResponse){
         log.info("COMMENTS_OK");
         historyRepository.save(new History(HistoryEnum.COMMENTS_OK, postDTOResponse.id()));
         enabled(postDTOResponse);
     }
-
+    @Async
     public void enabled(PostDTOResponse postDTOResponse){
         log.info("ENABLED");
         historyRepository.save(new History(HistoryEnum.ENABLED, postDTOResponse.id()));

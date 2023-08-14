@@ -27,7 +27,6 @@ public class JmsConfig {
         configure.configure(factory, connectionFactory);
         return factory;
     }
-
     @Bean
     public MappingJackson2MessageConverter jacksonJmsMessageConverter() {
         MappingJackson2MessageConverter converter =

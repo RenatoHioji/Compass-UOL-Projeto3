@@ -19,7 +19,6 @@ public class ApiControllerImpl implements ApiController {
     @PostMapping("/{postId}")
     public ResponseEntity<String> processPost(@PathVariable(value="postId") Long postId){
         jmsTemplate.convertAndSend("process_post_queue", postId);
-
         return ResponseEntity.ok("CREATING");
     }
     @Override

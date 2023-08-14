@@ -13,7 +13,6 @@ public class MessageConsumer {
     private static final String COMMENT_POST_QUEUE = "comment_post_queue";
     private static final String UPDATE_POST_QUEUE = "update_post_queue";
     private final ApiService apiService;
-    private final JmsTemplate jmsTemplate;
 
     @JmsListener(destination = PROCESS_POST_QUEUE)
     public void postReceiverMessage(Long postId){
@@ -24,7 +23,6 @@ public class MessageConsumer {
     @JmsListener(destination = COMMENT_POST_QUEUE)
     public void commentReceiverMessage(Long postId){
             apiService.findComment(apiService.findById(postId));
-
     }
 
     @JmsListener(destination = UPDATE_POST_QUEUE)

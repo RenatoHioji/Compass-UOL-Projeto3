@@ -85,7 +85,7 @@ public class ApiService{
         log.info("ENABLED");
         historyRepository.save(new History(HistoryEnum.ENABLED, postDTOResponse.id()));
     }
-
+    @Async
     public void disabled(PostDTOResponse postDTOResponse){
         findById(postDTOResponse.id());
         log.info("DISABLED");
@@ -98,6 +98,7 @@ public class ApiService{
         }
 
     }
+    @Async
     public void updatingPost(PostDTOResponse postDTOResponse) {
         findById(postDTOResponse.id());
         List<History> historyList = searchHistory(postDTOResponse.id());
@@ -110,6 +111,7 @@ public class ApiService{
             throw new ResourceNotFoundException("This post can only be updated if it status is ENABLED or DISABLED and it exists");
         }
     }
+    @Async
     private void failedPost(PostDTOResponse postDTOResponse) {
 
         log.info("FAILED");
@@ -119,6 +121,7 @@ public class ApiService{
     public List<PostDTOResponse> findAll(){
          return repository.findAll().stream().map(PostDTOResponse::new).toList();
     }
+
 
     public void verifyPostId(Long postId){
         repository.findById(postId).ifPresent(post -> {

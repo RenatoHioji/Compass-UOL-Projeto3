@@ -56,10 +56,10 @@ public class SecurityConfig {
 
         MvcRequestMatcher.Builder mvcMatcherBuilder = new MvcRequestMatcher.Builder(introspector);
 
-        http.csrf(csrf -> csrf
-                                .csrfTokenRequestHandler(requestHandler)
-                                .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
-                        .ignoringRequestMatchers(AntPathRequestMatcher.antMatcher("/h2-console/**"))
+        http.csrf(CsrfConfigurer::disable
+//                                .csrfTokenRequestHandler(requestHandler)
+//                                .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
+//                        .ignoringRequestMatchers(AntPathRequestMatcher.antMatcher("/h2-console/**"))
                 ).authorizeHttpRequests((authorize) -> authorize
                         .requestMatchers(mvcMatcherBuilder.pattern("/posts")).permitAll()
                         .requestMatchers(mvcMatcherBuilder.pattern("/security/**")).permitAll()
@@ -67,7 +67,7 @@ public class SecurityConfig {
                         .requestMatchers(mvcMatcherBuilder.pattern("/swagger-resources/**")).permitAll()
                         .requestMatchers(mvcMatcherBuilder.pattern("/v3/api-docs/**")).permitAll()
                         .requestMatchers(AntPathRequestMatcher.antMatcher("/h2-console/**")).permitAll()
-                        .anyRequest().authenticated()
+                        .anyRequest().permitAll()
                 )
                 .headers(headers -> headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin))
                 .exceptionHandling(exception ->
@@ -85,7 +85,7 @@ public class SecurityConfig {
                     config.setMaxAge(3600L);
                     return config;
                 }));
-        http.addFilterAfter(new CsrfCookieFilter(), BasicAuthenticationFilter.class);
+//        http.addFilterAfter(new CsrfCookieFilter(), BasicAuthenticationFilter.class);
         http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
